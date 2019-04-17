@@ -31,11 +31,7 @@ phases:
       # Instrument the file as opposed to the function only
       cover-only: file
       # Set string input value  
-      string-input-value: ["foo", "Bar", "BAZ", "1234"]
-    # If the logs contain output of the following then proceed to phase X
-    nextPhase:
-      # If the function is not analysable then do not pass onto the next phase
-      not_analyzed: null
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
   -
   #Phase 1 PRETTY AND COMPLEX - Standard models, longer run time, pretty tests, Do Not Test Private Method Directly
     timeout: 180
@@ -55,7 +51,7 @@ phases:
       # Add constraint that strings are printable
       string-printable: true
       # Set string input value  
-      string-input-value: ["foo", "Bar", "BAZ", "1234"]
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
       # Make implicit runtime exceptions explicit.
       throw-runtime-exceptions: false
       # Set an upper bound on loop unwinding.
@@ -89,7 +85,11 @@ phases:
       # Set an upper bound on loop unwinding.
       unwind: 1
       # Set string input value  
-      string-input-value: ["foo", "Bar", "BAZ", "1234"]
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+      # If the logs contain output of the following then proceed to phase X
+    nextPhase:
+      # If the function is not analysable then do not pass onto the next phase
+      not_analyzed: null
   -
   #Phase 3 Complex and Private Directly
     timeout: 180
@@ -109,7 +109,7 @@ phases:
       # Set an upper bound on loop unwinding.
       unwind: 3
       # Set string input value  
-      string-input-value: ["foo", "Bar", "BAZ", "1234"]
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
   -
   #Phase 4 EXCEPTIONS
     timeout: 180
@@ -131,7 +131,7 @@ phases:
       # Set an upper bound on loop unwinding.
   -
     #PHASE 5 Big numbers and less contraints on inputs 
-    timeout: 180
+    timeout: 300
     cbmcArguments:
       # Use the standard models library.
       classpath: '/tools/cbmc/models.jar:.'
