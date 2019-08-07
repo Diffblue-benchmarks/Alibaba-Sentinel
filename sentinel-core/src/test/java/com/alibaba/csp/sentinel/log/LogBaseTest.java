@@ -1,79 +1,152 @@
-/*
- * Copyright 1999-2018 Alibaba Group Holding Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.alibaba.csp.sentinel.log;
 
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
+import com.alibaba.csp.sentinel.log.LogBase;
+import com.alibaba.csp.sentinel.log.LogConfigLoader;
+import com.alibaba.csp.sentinel.util.ConfigUtil;
+import com.diffblue.deeptestutils.mock.DTUMemberMatcher;
 import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.lang.reflect.Method;
 
-import static com.alibaba.csp.sentinel.log.LogBase.*;
-import static com.alibaba.csp.sentinel.util.ConfigUtil.addSeparator;
-
-/**
- * @author lianglin
- * @since 1.7.0
- */
+@RunWith(PowerMockRunner.class)
 public class LogBaseTest {
 
+  @Rule public final ExpectedException thrown = ExpectedException.none();
 
+  @Rule public final Timeout globalTimeout = new Timeout(10000);
 
-    //add Jvm parameter
-    //-Dcsp.sentinel.config.file=log-propertiesTest.properties
-    //-Dcsp.sentinel.log.charset="utf-8"
-    //-Dcsp.sentinel.log.output.type="file"
-    //@Test
-    public void testLoadProperties() throws IOException {
+  /* testedClasses: LogBase */
+  // Test written by Diffblue Cover.
+  @PrepareForTest({LogConfigLoader.class, ConfigUtil.class, Throwable.class, System.class,
+                   LogBase.class, File.class})
+  @Test
+  public void
+  getLogBaseDirOutputNotNull() throws Exception {
 
-        File file = null;
-        String fileName = "log-propertiesTest.properties";
-        try {
-            file = new File(addSeparator(System.getProperty("user.dir")) + "target/classes/" + fileName);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            BufferedWriter out = new BufferedWriter(new FileWriter(file));
-            out.write(buildPropertyStr(LOG_DIR, "/data/logs/"));
-            out.write("\n");
-            out.write(buildPropertyStr(LOG_NAME_USE_PID, "true"));
-            out.write("\n");
-            out.write(buildPropertyStr(LOG_OUTPUT_TYPE, "console"));
-            out.write("\n");
-            out.write(buildPropertyStr(LOG_CHARSET, "gbk"));
-            out.flush();
-            out.close();
+    // Setup mocks
+    PowerMockito.mockStatic(ConfigUtil.class);
+    PowerMockito.mockStatic(System.class);
+    PowerMockito.mockStatic(LogConfigLoader.class);
 
-            //test will make dir
-            //Assert.assertTrue(LogBase.getLogBaseDir().equals("/data/logs/"));
-            Assert.assertTrue(LogBase.isLogNameUsePid());
-            Assert.assertTrue(LogBase.getLogOutputType().equals("file"));
-            Assert.assertTrue(LogBase.getLogCharset().equals("utf-8"));
-        } finally {
-            if (file != null) {
-                file.delete();
-            }
-        }
+    // Arrange
+    PowerMockito.doReturn(null).when(LogConfigLoader.class);
+    LogConfigLoader.getProperties();
+    PowerMockito.when(System.getProperty(or(isA(String.class), isNull(String.class))))
+        .thenReturn(null);
+    final Method addSeparatorMethod =
+        DTUMemberMatcher.method(ConfigUtil.class, "addSeparator", String.class);
+    PowerMockito.doReturn("??????????????????????????")
+        .when(ConfigUtil.class, addSeparatorMethod)
+        .withArguments(or(isA(String.class), isNull(String.class)));
 
+    // Act
+    final String actual = LogBase.getLogBaseDir();
 
-    }
+    // Assert result
+    Assert.assertEquals("??????????????????????????logs/csp/", actual);
+  }
 
+  // Test written by Diffblue Cover.
+  @PrepareForTest({LogConfigLoader.class, ConfigUtil.class, Throwable.class, System.class,
+                   LogBase.class, File.class})
+  @Test
+  public void
+  getLogCharsetOutputNotNull() throws Exception {
 
-    private String buildPropertyStr(String key, String value) {
-        return key + "=" + value;
-    }
+    // Setup mocks
+    PowerMockito.mockStatic(ConfigUtil.class);
+    PowerMockito.mockStatic(System.class);
+    PowerMockito.mockStatic(LogConfigLoader.class);
+
+    // Arrange
+    PowerMockito.doReturn(null).when(LogConfigLoader.class);
+    LogConfigLoader.getProperties();
+    PowerMockito.when(System.getProperty(or(isA(String.class), isNull(String.class))))
+        .thenReturn(null);
+    final Method addSeparatorMethod =
+        DTUMemberMatcher.method(ConfigUtil.class, "addSeparator", String.class);
+    PowerMockito.doReturn("??????????????????????????")
+        .when(ConfigUtil.class, addSeparatorMethod)
+        .withArguments(or(isA(String.class), isNull(String.class)));
+
+    // Act
+    final String actual = LogBase.getLogCharset();
+
+    // Assert result
+    Assert.assertEquals("utf-8", actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @PrepareForTest({LogConfigLoader.class, ConfigUtil.class, Throwable.class, System.class,
+                   LogBase.class, File.class})
+  @Test
+  public void
+  getLogOutputTypeOutputNotNull() throws Exception {
+
+    // Setup mocks
+    PowerMockito.mockStatic(ConfigUtil.class);
+    PowerMockito.mockStatic(System.class);
+    PowerMockito.mockStatic(LogConfigLoader.class);
+
+    // Arrange
+    PowerMockito.doReturn(null).when(LogConfigLoader.class);
+    LogConfigLoader.getProperties();
+    PowerMockito.when(System.getProperty(or(isA(String.class), isNull(String.class))))
+        .thenReturn(null);
+    final Method addSeparatorMethod =
+        DTUMemberMatcher.method(ConfigUtil.class, "addSeparator", String.class);
+    PowerMockito.doReturn("??????????????????????????")
+        .when(ConfigUtil.class, addSeparatorMethod)
+        .withArguments(or(isA(String.class), isNull(String.class)));
+
+    // Act
+    final String actual = LogBase.getLogOutputType();
+
+    // Assert result
+    Assert.assertEquals("file", actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @PrepareForTest({LogConfigLoader.class, ConfigUtil.class, Throwable.class, System.class,
+                   LogBase.class, File.class})
+  @Test
+  public void
+  isLogNameUsePidOutputFalse() throws Exception {
+
+    // Setup mocks
+    PowerMockito.mockStatic(ConfigUtil.class);
+    PowerMockito.mockStatic(System.class);
+    PowerMockito.mockStatic(LogConfigLoader.class);
+
+    // Arrange
+    PowerMockito.doReturn(null).when(LogConfigLoader.class);
+    LogConfigLoader.getProperties();
+    PowerMockito.when(System.getProperty(or(isA(String.class), isNull(String.class))))
+        .thenReturn(null);
+    final Method addSeparatorMethod =
+        DTUMemberMatcher.method(ConfigUtil.class, "addSeparator", String.class);
+    PowerMockito.doReturn("??????????????????????????")
+        .when(ConfigUtil.class, addSeparatorMethod)
+        .withArguments(or(isA(String.class), isNull(String.class)));
+
+    // Act
+    final boolean actual = LogBase.isLogNameUsePid();
+
+    // Assert result
+    Assert.assertFalse(actual);
+  }
 }
