@@ -1,83 +1,60 @@
 package com.alibaba.csp.sentinel.node.metric;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+import com.alibaba.csp.sentinel.log.LogConfigLoader;
+import com.alibaba.csp.sentinel.node.metric.MetricWriter;
+import com.alibaba.csp.sentinel.util.ConfigUtil;
+import com.diffblue.deeptestutils.mock.DTUMemberMatcher;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.io.File;
+import java.lang.reflect.Method;
 
-/**
- * @author Carpenter Lee
- */
+@RunWith(PowerMockRunner.class)
 public class MetricWriterTest {
-    @Test
-    public void testFileNameCmp() {
-        String[] arr = new String[] {
-            "metrics.log.2018-03-06",
-            "metrics.log.2018-03-07",
-            "metrics.log.2018-03-07.51",
-            "metrics.log.2018-03-07.10",
-            "metrics.log.2018-03-06.100"
-        };
-        String[] key = new String[] {
-            "metrics.log.2018-03-06",
-            "metrics.log.2018-03-06.100",
-            "metrics.log.2018-03-07",
-            "metrics.log.2018-03-07.10",
-            "metrics.log.2018-03-07.51"
-        };
-        ArrayList<String> list = new ArrayList<String>(Arrays.asList(arr));
-        Collections.sort(list, MetricWriter.METRIC_FILE_NAME_CMP);
-        assertEquals(Arrays.asList(key), list);
-    }
 
-    @Test
-    public void testFileNamePidCmp() {
-        String[] arr = new String[] {
-            "metrics.log.pid1234.2018-03-06",
-            "metrics.log.pid1234.2018-03-07",
-            "metrics.log.pid1234.2018-03-07.51",
-            "metrics.log.pid1234.2018-03-07.10",
-            "metrics.log.pid1234.2018-03-06.100"
-        };
-        String[] key = new String[] {
-            "metrics.log.pid1234.2018-03-06",
-            "metrics.log.pid1234.2018-03-06.100",
-            "metrics.log.pid1234.2018-03-07",
-            "metrics.log.pid1234.2018-03-07.10",
-            "metrics.log.pid1234.2018-03-07.51"
-        };
-        ArrayList<String> list = new ArrayList<String>(Arrays.asList(arr));
-        Collections.sort(list, MetricWriter.METRIC_FILE_NAME_CMP);
-        assertEquals(Arrays.asList(key), list);
-    }
+  @Rule public final ExpectedException thrown = ExpectedException.none();
 
-    @Test
-    public void testFileNameMatches(){
-        String baseFileName = "Sentinel-SDK-Demo-metrics.log";
-        String fileName = "Sentinel-SDK-Demo-metrics.log.2018-03-06";
-        assertTrue(MetricWriter.fileNameMatches(fileName, baseFileName));
+  @Rule public final Timeout globalTimeout = new Timeout(10000);
 
-        String baseFileName2 = "Sentinel-Admin-metrics.log.pid22568";
-        String fileName2 = "Sentinel-Admin-metrics.log.pid22568.2018-12-24";
-        assertTrue(MetricWriter.fileNameMatches(fileName2, baseFileName2));
+  // Test written by Diffblue Cover.
+  @Test
+  public void fileNameMatchesInputNotNullNotNullOutputFalse() {
 
-        String baseFileName3 = "Sentinel-SDK-Demo-metrics.log";
-        String fileName3 = "Sentinel-SDK-Demo-metrics.log.2018-03-06.11";
-        assertTrue(MetricWriter.fileNameMatches(fileName3, baseFileName3));
+    // Arrange
+    final String fileName = "3";
+    final String baseFileName = "a,b,c";
 
-        String baseFileName4 = "Sentinel-SDK-Demo-metrics.log";
-        String fileName4 = "Sentinel-SDK-Demo-metrics.log.XXX.2018-03-06.11";
-        assertFalse(MetricWriter.fileNameMatches(fileName4, baseFileName4));
+    // Act
+    final boolean actual = MetricWriter.fileNameMatches(fileName, baseFileName);
 
-        String baseFileName5 = "Sentinel-SDK-Demo-metrics.log";
-        String fileName5 = "Sentinel-SDK-Demo-metrics.log.2018-03-06.11XXX";
-        assertFalse(MetricWriter.fileNameMatches(fileName5, baseFileName5));
-    }
+    // Assert result
+    Assert.assertFalse(actual);
+  }
 
+  // Test written by Diffblue Cover.
+  @Test
+  public void formIndexFileNameInputNotNullOutputNotNull() {
 
+    // Arrange
+    final String metricFileName = "3";
+
+    // Act
+    final String actual = MetricWriter.formIndexFileName(metricFileName);
+
+    // Assert result
+    Assert.assertEquals("3.idx", actual);
+  }
 }

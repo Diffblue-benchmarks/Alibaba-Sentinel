@@ -1,178 +1,207 @@
-/*
- * Copyright 1999-2018 Alibaba Group Holding Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.alibaba.csp.sentinel.slots.block.flow;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.alibaba.csp.sentinel.context.Context;
-import com.alibaba.csp.sentinel.node.ClusterNode;
 import com.alibaba.csp.sentinel.node.DefaultNode;
-import com.alibaba.csp.sentinel.slots.block.RuleConstant;
-import com.alibaba.csp.sentinel.slots.block.flow.controller.DefaultController;
+import com.alibaba.csp.sentinel.slots.block.flow.ClusterFlowConfig;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
+import com.alibaba.csp.sentinel.slots.block.flow.TrafficShapingController;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 
-/**
- * @author jialiang.linjl
- */
-@Ignore("Deprecated test for legacy FlowRule")
 public class FlowRuleTest {
 
-    @Test
-    public void testFlowRule_grade() {
+  @Rule public final ExpectedException thrown = ExpectedException.none();
 
-        FlowRule flowRule = new FlowRule();
-        flowRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
-        flowRule.setCount(1);
-        flowRule.setLimitApp("default");
-        flowRule.setStrategy(RuleConstant.STRATEGY_DIRECT);
+  @Rule public final Timeout globalTimeout = new Timeout(10000);
 
-        DefaultController defaultController = new DefaultController(1, flowRule.getGrade());
-        flowRule.setRater(defaultController);
+  // Test written by Diffblue Cover.
 
-        Context context = mock(Context.class);
-        DefaultNode node = mock(DefaultNode.class);
-        ClusterNode cn = mock(ClusterNode.class);
+  @Test
+  public void constructorInputNotNullOutputVoid() {
 
-        when(context.getOrigin()).thenReturn("");
-        when(node.getClusterNode()).thenReturn(cn);
-        when(cn.passQps()).thenReturn(1d);
+    // Arrange
+    final String resourceName = ",";
 
-        assertFalse(flowRule.passCheck(context, node, 1));
+    // Act, creating object to test constructor
+    final FlowRule objectUnderTest = new FlowRule(resourceName);
 
-        flowRule.setGrade(RuleConstant.FLOW_GRADE_THREAD);
-        defaultController = new DefaultController(1, flowRule.getGrade());
-        flowRule.setRater(defaultController);
-        when(cn.curThreadNum()).thenReturn(1);
-        assertTrue(!flowRule.passCheck(context, node, 1));
-    }
+    // Assert side effects
+    Assert.assertEquals(",", objectUnderTest.getResource());
+  }
 
-    @Test
-    public void testFlowRule_strategy() {
+  // Test written by Diffblue Cover.
+  @Test
+  public void equalsInputNullOutputFalse() {
 
-        FlowRule flowRule = new FlowRule();
-        flowRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
-        flowRule.setCount(1);
-        flowRule.setLimitApp("default");
-        flowRule.setStrategy(RuleConstant.STRATEGY_CHAIN);
-        DefaultController defaultController = new DefaultController(1, flowRule.getGrade());
-        flowRule.setRater(defaultController);
-        flowRule.setRefResource("entry1");
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
+    final Object o = null;
 
-        Context context = mock(Context.class);
-        DefaultNode dn = mock(DefaultNode.class);
+    // Act
+    final boolean actual = objectUnderTest.equals(o);
 
-        when(context.getName()).thenReturn("entry1");
-        when(dn.passQps()).thenReturn(1d);
-        assertFalse(flowRule.passCheck(context, dn, 1));
+    // Assert result
+    Assert.assertFalse(actual);
+  }
 
-        when(context.getName()).thenReturn("entry2");
-        assertTrue(flowRule.passCheck(context, dn, 1));
+  // Test written by Diffblue Cover.
+  @Test
+  public void getClusterConfigOutputNull() {
 
-        // Strategy == relate
-        flowRule.setStrategy(RuleConstant.STRATEGY_CHAIN);
-        ClusterNode cn = mock(ClusterNode.class);
-        assertTrue(flowRule.passCheck(context, dn, 1));
-    }
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
 
-    @Test
-    public void testOrigin() {
-        FlowRule flowRule = new FlowRule();
-        flowRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
-        flowRule.setCount(1);
-        flowRule.setLimitApp("default");
-        flowRule.setStrategy(RuleConstant.STRATEGY_DIRECT);
-        DefaultController defaultController = new DefaultController(1, flowRule.getGrade());
-        flowRule.setRater(defaultController);
-        flowRule.setRefResource("entry1");
+    // Act
+    final ClusterFlowConfig actual = objectUnderTest.getClusterConfig();
 
-        Context context = mock(Context.class);
-        DefaultNode dn = mock(DefaultNode.class);
-        when(context.getOrigin()).thenReturn("origin1");
-        when(dn.passQps()).thenReturn(1d);
-        when(context.getOriginNode()).thenReturn(dn);
+    // Assert result
+    Assert.assertNull(actual);
+  }
 
-        /*
-         * first scenario, limit app as default
-         *
-         */
-        ClusterNode cn = mock(ClusterNode.class);
-        when(dn.getClusterNode()).thenReturn(cn);
-        when(cn.passQps()).thenReturn(1d);
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]) == false);
-        when(cn.passQps()).thenReturn(0d);
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]));
+  // Test written by Diffblue Cover.
+  @Test
+  public void getControlBehaviorOutputZero() {
 
-        flowRule.setStrategy(RuleConstant.STRATEGY_CHAIN);
-        flowRule.setResource("entry1");
-        when(context.getName()).thenReturn("entry1");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]) == false);
-        when(context.getName()).thenReturn("entry2");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]));
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
 
-        // relate node
-        flowRule.setStrategy(RuleConstant.STRATEGY_RELATE);
-        flowRule.setResource("worong");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]));
+    // Act
+    final int actual = objectUnderTest.getControlBehavior();
 
-        /*
-         * second scenario test a context with the same origin1
-         *
-         */
-        flowRule.setLimitApp("origin1");
-        when(context.getName()).thenReturn("entry1");
-        // direct node
-        flowRule.setStrategy(RuleConstant.STRATEGY_DIRECT);
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]) == false);
+    // Assert result
+    Assert.assertEquals(0, actual);
+  }
 
-        // chain node
-        flowRule.setResource("entry1");
-        flowRule.setStrategy(RuleConstant.STRATEGY_CHAIN);
-        when(context.getName()).thenReturn("entry1");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]) == false);
-        when(context.getName()).thenReturn("entry2");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]));
+  // Test written by Diffblue Cover.
+  @Test
+  public void getCountOutputZero() {
 
-        // relate node
-        flowRule.setStrategy(RuleConstant.STRATEGY_RELATE);
-        flowRule.setResource("not exits");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]));
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
 
-        when(context.getOrigin()).thenReturn("origin2");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]));
+    // Act
+    final double actual = objectUnderTest.getCount();
 
-        /*
-         * limit app= other
-         */
-        flowRule.setLimitApp("other");
-        flowRule.setResource("hello world");
+    // Assert result
+    Assert.assertEquals(0.0, actual, 0.0);
+  }
 
-        flowRule.setStrategy(RuleConstant.STRATEGY_DIRECT);
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]) == false);
+  // Test written by Diffblue Cover.
+  @Test
+  public void getGradeOutputPositive() {
 
-        flowRule.setStrategy(RuleConstant.STRATEGY_CHAIN);
-        flowRule.setResource("entry1");
-        when(context.getName()).thenReturn("entry1");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]) == false);
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
 
-        when(context.getName()).thenReturn("entry2");
-        assertTrue(flowRule.passCheck(context, dn, 1, new Object[0]));
-    }
+    // Act
+    final int actual = objectUnderTest.getGrade();
 
+    // Assert result
+    Assert.assertEquals(1, actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void getMaxQueueingTimeMsOutputPositive() {
+
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
+
+    // Act
+    final int actual = objectUnderTest.getMaxQueueingTimeMs();
+
+    // Assert result
+    Assert.assertEquals(500, actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void getRaterOutputNull() {
+
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
+
+    // Act
+    final TrafficShapingController actual = objectUnderTest.getRater();
+
+    // Assert result
+    Assert.assertNull(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void getRefResourceOutputNull() {
+
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
+
+    // Act
+    final String actual = objectUnderTest.getRefResource();
+
+    // Assert result
+    Assert.assertNull(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void getStrategyOutputZero() {
+
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
+
+    // Act
+    final int actual = objectUnderTest.getStrategy();
+
+    // Assert result
+    Assert.assertEquals(0, actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void getWarmUpPeriodSecOutputPositive() {
+
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
+
+    // Act
+    final int actual = objectUnderTest.getWarmUpPeriodSec();
+
+    // Assert result
+    Assert.assertEquals(10, actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isClusterModeOutputFalse() {
+
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
+
+    // Act
+    final boolean actual = objectUnderTest.isClusterMode();
+
+    // Assert result
+    Assert.assertFalse(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void passCheckInputNullNullZeroNullOutputTrue() {
+
+    // Arrange
+    final FlowRule objectUnderTest = new FlowRule();
+    final Context context = null;
+    final DefaultNode node = null;
+    final int acquireCount = 0;
+    final Object[] args = null;
+
+    // Act
+    final boolean actual = objectUnderTest.passCheck(context, node, acquireCount, args);
+
+    // Assert result
+    Assert.assertTrue(actual);
+  }
 }

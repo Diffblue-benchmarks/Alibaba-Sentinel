@@ -1,45 +1,32 @@
 package com.alibaba.csp.sentinel.slots.block.flow;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import com.alibaba.csp.sentinel.slots.block.RuleConstant;
-
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleComparator;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 
-import static org.junit.Assert.*;
-
-/**
- * @author Eric Zhao
- */
 public class FlowRuleComparatorTest {
 
-    @Test
-    public void testFlowRuleComparator() {
-        FlowRule ruleA = new FlowRule("abc")
-            .setCount(10);
-        ruleA.setLimitApp(RuleConstant.LIMIT_APP_DEFAULT);
-        FlowRule ruleB = new FlowRule("abc");
-        ruleB.setLimitApp("originA");
-        FlowRule ruleC = new FlowRule("abc");
-        ruleC.setLimitApp("originB");
-        FlowRule ruleD = new FlowRule("abc");
-        ruleD.setLimitApp(RuleConstant.LIMIT_APP_OTHER);
-        FlowRule ruleE = new FlowRule("abc")
-            .setCount(20);
-        ruleE.setLimitApp(RuleConstant.LIMIT_APP_DEFAULT);
+  @Rule public final ExpectedException thrown = ExpectedException.none();
 
-        List<FlowRule> list = Arrays.asList(ruleA, ruleB, ruleC, ruleD, ruleE);
-        FlowRuleComparator comparator = new FlowRuleComparator();
-        Collections.sort(list, comparator);
-        List<FlowRule> expected = Arrays.asList(ruleB, ruleC, ruleD, ruleA, ruleE);
-        assertOrderEqual(expected.size(), expected, list);
-    }
+  @Rule public final Timeout globalTimeout = new Timeout(10000);
 
-    private void assertOrderEqual(int size, List<FlowRule> expected, List<FlowRule> actual) {
-        for (int i = 0; i < size; i++) {
-            assertEquals(expected.get(i), actual.get(i));
-        }
-    }
+  // Test written by Diffblue Cover.
+  @Test
+  public void compareInputNotNullNotNullOutputZero() {
+
+    // Arrange
+    final FlowRuleComparator objectUnderTest = new FlowRuleComparator();
+    final FlowRule o1 = new FlowRule();
+    final FlowRule o2 = new FlowRule();
+
+    // Act
+    final int actual = objectUnderTest.compare(o1, o2);
+
+    // Assert result
+    Assert.assertEquals(0, actual);
+  }
 }

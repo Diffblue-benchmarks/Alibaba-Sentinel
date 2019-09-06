@@ -1,84 +1,304 @@
-/*
- * Copyright 1999-2019 Alibaba Group Holding Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.alibaba.csp.sentinel.util;
 
+import static org.mockito.AdditionalMatchers.or;
+
+import com.alibaba.csp.sentinel.util.StringUtil;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 
 public class StringUtilTest {
 
+  @Rule public final ExpectedException thrown = ExpectedException.none();
+
+  @Rule public final Timeout globalTimeout = new Timeout(10000);
+
+  // Test written by Diffblue Cover.
   @Test
-  public void testCapitalize() {
-    Assert.assertNull(StringUtil.capitalize(null));
-    Assert.assertEquals("Foo", StringUtil.capitalize("foo"));
+  public void capitalizeInputNullOutputNull() {
+
+    // Arrange
+    final String str = null;
+
+    // Act
+    final String actual = StringUtil.capitalize(str);
+
+    // Assert result
+    Assert.assertNull(actual);
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testEqualsIgnoreCase() {
-    Assert.assertFalse(StringUtil.equalsIgnoreCase("", "BCCC"));
-    Assert.assertFalse(StringUtil.equalsIgnoreCase(null, ""));
-    Assert.assertTrue(StringUtil.equalsIgnoreCase("", ""));
-    Assert.assertTrue(StringUtil.equalsIgnoreCase("BcCc", "BCCC"));
-    Assert.assertTrue(StringUtil.equalsIgnoreCase(null, null));
+  public void equalsIgnoreCaseInputNotNullNotNullOutputFalse2() {
+
+    // Arrange
+    final CharSequence str1 = "??";
+    final CharSequence str2 = "?";
+
+    // Act
+    final boolean actual = StringUtil.equalsIgnoreCase(str1, str2);
+
+    // Assert result
+    Assert.assertFalse(actual);
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testEquals() {
-    Assert.assertFalse(StringUtil.equals(null, ""));
-    Assert.assertFalse(StringUtil.equals("\"", "\"#\"\"\"\"\"\""));
-    Assert.assertTrue(StringUtil.equals(null, null));
+  public void equalsIgnoreCaseInputNotNullNullOutputFalse() {
+
+    // Arrange
+    final CharSequence str1 = "?";
+    final CharSequence str2 = null;
+
+    // Act
+    final boolean actual = StringUtil.equalsIgnoreCase(str1, str2);
+
+    // Assert result
+    Assert.assertFalse(actual);
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testIsBlank() {
-    Assert.assertFalse(StringUtil.isBlank("!!!!"));
-    Assert.assertTrue(StringUtil.isBlank(null));
-    Assert.assertTrue(StringUtil.isBlank("\n\n"));
-    Assert.assertTrue(StringUtil.isBlank(""));
+  public void equalsIgnoreCaseInputNullNullOutputTrue() {
+
+    // Arrange
+    final CharSequence str1 = null;
+    final CharSequence str2 = null;
+
+    // Act
+    final boolean actual = StringUtil.equalsIgnoreCase(str1, str2);
+
+    // Assert result
+    Assert.assertTrue(actual);
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testIsEmpty() {
-    Assert.assertFalse(StringUtil.isEmpty("bar"));
-    Assert.assertTrue(StringUtil.isEmpty(""));
+  public void equalsInputNotNullNotNullOutputTrue() {
+
+    // Arrange
+    final String str1 = ",";
+    final String str2 = ",";
+
+    // Act
+    final boolean actual = StringUtil.equals(str1, str2);
+
+    // Assert result
+    Assert.assertTrue(actual);
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testIsNotBlank() {
-    Assert.assertFalse(StringUtil.isNotBlank(""));
-    Assert.assertTrue(StringUtil.isNotBlank("\"###"));
+  public void equalsInputNullNotNullOutputFalse() {
+
+    // Arrange
+    final String str1 = null;
+    final String str2 = "";
+
+    // Act
+    final boolean actual = StringUtil.equals(str1, str2);
+
+    // Assert result
+    Assert.assertFalse(actual);
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testIsNotEmpty() {
-    Assert.assertFalse(StringUtil.isNotEmpty(""));
-    Assert.assertTrue(StringUtil.isNotEmpty("foo"));
+  public void equalsInputNullNullOutputTrue() {
+
+    // Arrange
+    final String str1 = null;
+    final String str2 = null;
+
+    // Act
+    final boolean actual = StringUtil.equals(str1, str2);
+
+    // Assert result
+    Assert.assertTrue(actual);
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testTrim() {
-    Assert.assertNull(StringUtil.trim(null));
-    Assert.assertEquals("", StringUtil.trim(""));
-    Assert.assertEquals("foo", StringUtil.trim("foo  "));
+  public void isBlankInputNotNullOutputFalse() {
+
+    // Arrange
+    final String str = "\'";
+
+    // Act
+    final boolean actual = StringUtil.isBlank(str);
+
+    // Assert result
+    Assert.assertFalse(actual);
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testTrimToEmpty() {
-    Assert.assertEquals("", StringUtil.trimToEmpty(""));
-    Assert.assertEquals("", StringUtil.trimToEmpty(null));
+  public void isBlankInputNotNullOutputTrue() {
+
+    // Arrange
+    final String str = "\u2001";
+
+    // Act
+    final boolean actual = StringUtil.isBlank(str);
+
+    // Assert result
+    Assert.assertTrue(actual);
   }
 
+  // Test written by Diffblue Cover.
+  @Test
+  public void isBlankInputNullOutputTrue() {
+
+    // Arrange
+    final String str = null;
+
+    // Act
+    final boolean actual = StringUtil.isBlank(str);
+
+    // Assert result
+    Assert.assertTrue(actual);
+  }
+
+  // Test written by Diffblue Cover.
+
+  @Test
+  public void isEmptyInputNotNullOutputFalse() {
+
+    // Arrange
+    final String str = "1";
+
+    // Act
+    final boolean actual = StringUtil.isEmpty(str);
+
+    // Assert result
+    Assert.assertFalse(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isEmptyInputNullOutputTrue() {
+
+    // Arrange
+    final String str = null;
+
+    // Act
+    final boolean actual = StringUtil.isEmpty(str);
+
+    // Assert result
+    Assert.assertTrue(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isNotBlankInputNotNullOutputTrue() {
+
+    // Arrange
+    final String str = "\'";
+
+    // Act
+    final boolean actual = StringUtil.isNotBlank(str);
+
+    // Assert result
+    Assert.assertTrue(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isNotBlankInputNullOutputFalse() {
+
+    // Arrange
+    final String str = null;
+
+    // Act
+    final boolean actual = StringUtil.isNotBlank(str);
+
+    // Assert result
+    Assert.assertFalse(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isNotEmptyInputNotNullOutputTrue() {
+
+    // Arrange
+    final String str = "3";
+
+    // Act
+    final boolean actual = StringUtil.isNotEmpty(str);
+
+    // Assert result
+    Assert.assertTrue(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isNotEmptyInputNullOutputFalse() {
+
+    // Arrange
+    final String str = null;
+
+    // Act
+    final boolean actual = StringUtil.isNotEmpty(str);
+
+    // Assert result
+    Assert.assertFalse(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void trimInputNotNullOutputNotNull() {
+
+    // Arrange
+    final String str = "\'";
+
+    // Act
+    final String actual = StringUtil.trim(str);
+
+    // Assert result
+    Assert.assertEquals("\'", actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void trimInputNullOutputNull() {
+
+    // Arrange
+    final String str = null;
+
+    // Act
+    final String actual = StringUtil.trim(str);
+
+    // Assert result
+    Assert.assertNull(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void trimToEmptyInputNotNullOutputNotNull() {
+
+    // Arrange
+    final String str = "A1B2C3";
+
+    // Act
+    final String actual = StringUtil.trimToEmpty(str);
+
+    // Assert result
+    Assert.assertEquals("A1B2C3", actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void trimToEmptyInputNullOutputNotNull() {
+
+    // Arrange
+    final String str = null;
+
+    // Act
+    final String actual = StringUtil.trimToEmpty(str);
+
+    // Assert result
+    Assert.assertEquals("", actual);
+  }
 }

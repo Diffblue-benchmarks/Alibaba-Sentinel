@@ -1,44 +1,99 @@
 package com.alibaba.csp.sentinel.slots.block.flow.controller;
 
 import com.alibaba.csp.sentinel.node.Node;
-import com.alibaba.csp.sentinel.slots.block.RuleConstant;
-import com.alibaba.csp.sentinel.slots.block.flow.TrafficShapingController;
-
+import com.alibaba.csp.sentinel.slots.block.flow.controller.DefaultController;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-/**
- * @author Eric Zhao
- */
 public class DefaultControllerTest {
 
-    @Test
-    public void testCanPassForQps() {
-        double threshold = 10;
-        TrafficShapingController controller = new DefaultController(threshold, RuleConstant.FLOW_GRADE_QPS);
-        Node node = mock(Node.class);
-        when(node.passQps()).thenReturn(threshold - 1)
-            .thenReturn(threshold);
+  @Rule public final ExpectedException thrown = ExpectedException.none();
 
-        assertTrue(controller.canPass(node, 1));
-        assertFalse(controller.canPass(node, 1));
-    }
+  @Rule public final Timeout globalTimeout = new Timeout(10000);
 
-    @Test
-    public void testCanPassForThreadCount() {
-        int threshold = 8;
-        TrafficShapingController controller = new DefaultController(threshold, RuleConstant.FLOW_GRADE_THREAD);
-        Node node = mock(Node.class);
-        when(node.curThreadNum()).thenReturn(threshold - 1)
-            .thenReturn(threshold);
+  // Test written by Diffblue Cover.
+  @Test
+  public void canPassInputNullPositiveFalseOutputFalse() {
 
-        assertTrue(controller.canPass(node, 1));
-        assertFalse(controller.canPass(node, 1));
-    }
+    // Arrange
+    final DefaultController objectUnderTest = new DefaultController(Double.NEGATIVE_INFINITY, 0);
+    final Node node = null;
+    final int acquireCount = 268_435_456;
+    final boolean prioritized = false;
 
-    @Test
-    public void testCanPassForQpsMultiThread() {
-    }
+    // Act
+    final boolean actual = objectUnderTest.canPass(node, acquireCount, prioritized);
+
+    // Assert result
+    Assert.assertFalse(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void canPassInputNullPositiveOutputFalse() {
+
+    // Arrange
+    final DefaultController objectUnderTest = new DefaultController(Double.NEGATIVE_INFINITY, 0);
+    final Node node = null;
+    final int acquireCount = 32_768;
+
+    // Act
+    final boolean actual = objectUnderTest.canPass(node, acquireCount);
+
+    // Assert result
+    Assert.assertFalse(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void canPassInputNullPositiveOutputTrue() {
+
+    // Arrange
+    final DefaultController objectUnderTest = new DefaultController(Double.NaN, 0);
+    final Node node = null;
+    final int acquireCount = 32_768;
+
+    // Act
+    final boolean actual = objectUnderTest.canPass(node, acquireCount);
+
+    // Assert result
+    Assert.assertTrue(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void canPassInputNullPositiveTrueOutputFalse() {
+
+    // Arrange
+    final DefaultController objectUnderTest = new DefaultController(Double.NEGATIVE_INFINITY, 0);
+    final Node node = null;
+    final int acquireCount = 268_435_456;
+    final boolean prioritized = true;
+
+    // Act
+    final boolean actual = objectUnderTest.canPass(node, acquireCount, prioritized);
+
+    // Assert result
+    Assert.assertFalse(actual);
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void canPassInputNullPositiveTrueOutputTrue() {
+
+    // Arrange
+    final DefaultController objectUnderTest = new DefaultController(Double.NaN, 1);
+    final Node node = null;
+    final int acquireCount = 268_435_456;
+    final boolean prioritized = true;
+
+    // Act
+    final boolean actual = objectUnderTest.canPass(node, acquireCount, prioritized);
+
+    // Assert result
+    Assert.assertTrue(actual);
+  }
 }
