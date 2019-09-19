@@ -1,83 +1,55 @@
 package com.alibaba.csp.sentinel.node.metric;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-
+import com.alibaba.csp.sentinel.node.metric.MetricWriter;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-/**
- * @author Carpenter Lee
- */
 public class MetricWriterTest {
-    @Test
-    public void testFileNameCmp() {
-        String[] arr = new String[] {
-            "metrics.log.2018-03-06",
-            "metrics.log.2018-03-07",
-            "metrics.log.2018-03-07.51",
-            "metrics.log.2018-03-07.10",
-            "metrics.log.2018-03-06.100"
-        };
-        String[] key = new String[] {
-            "metrics.log.2018-03-06",
-            "metrics.log.2018-03-06.100",
-            "metrics.log.2018-03-07",
-            "metrics.log.2018-03-07.10",
-            "metrics.log.2018-03-07.51"
-        };
-        ArrayList<String> list = new ArrayList<String>(Arrays.asList(arr));
-        Collections.sort(list, MetricWriter.METRIC_FILE_NAME_CMP);
-        assertEquals(Arrays.asList(key), list);
-    }
 
-    @Test
-    public void testFileNamePidCmp() {
-        String[] arr = new String[] {
-            "metrics.log.pid1234.2018-03-06",
-            "metrics.log.pid1234.2018-03-07",
-            "metrics.log.pid1234.2018-03-07.51",
-            "metrics.log.pid1234.2018-03-07.10",
-            "metrics.log.pid1234.2018-03-06.100"
-        };
-        String[] key = new String[] {
-            "metrics.log.pid1234.2018-03-06",
-            "metrics.log.pid1234.2018-03-06.100",
-            "metrics.log.pid1234.2018-03-07",
-            "metrics.log.pid1234.2018-03-07.10",
-            "metrics.log.pid1234.2018-03-07.51"
-        };
-        ArrayList<String> list = new ArrayList<String>(Arrays.asList(arr));
-        Collections.sort(list, MetricWriter.METRIC_FILE_NAME_CMP);
-        assertEquals(Arrays.asList(key), list);
-    }
+  @Rule public final ExpectedException thrown = ExpectedException.none();
 
-    @Test
-    public void testFileNameMatches(){
-        String baseFileName = "Sentinel-SDK-Demo-metrics.log";
-        String fileName = "Sentinel-SDK-Demo-metrics.log.2018-03-06";
-        assertTrue(MetricWriter.fileNameMatches(fileName, baseFileName));
+  @Rule public final Timeout globalTimeout = new Timeout(10000);
 
-        String baseFileName2 = "Sentinel-Admin-metrics.log.pid22568";
-        String fileName2 = "Sentinel-Admin-metrics.log.pid22568.2018-12-24";
-        assertTrue(MetricWriter.fileNameMatches(fileName2, baseFileName2));
+  // Test written by Diffblue Cover.
+  @Test
+  public void fileNameMatchesInputNotNullNotNullOutputFalse() {
 
-        String baseFileName3 = "Sentinel-SDK-Demo-metrics.log";
-        String fileName3 = "Sentinel-SDK-Demo-metrics.log.2018-03-06.11";
-        assertTrue(MetricWriter.fileNameMatches(fileName3, baseFileName3));
+    // Act and Assert result
+    Assert.assertFalse(MetricWriter.fileNameMatches(",", "foo"));
+  }
 
-        String baseFileName4 = "Sentinel-SDK-Demo-metrics.log";
-        String fileName4 = "Sentinel-SDK-Demo-metrics.log.XXX.2018-03-06.11";
-        assertFalse(MetricWriter.fileNameMatches(fileName4, baseFileName4));
+  // Test written by Diffblue Cover.
+  @Test
+  public void formIndexFileNameInputNotNullOutputNotNull() {
 
-        String baseFileName5 = "Sentinel-SDK-Demo-metrics.log";
-        String fileName5 = "Sentinel-SDK-Demo-metrics.log.2018-03-06.11XXX";
-        assertFalse(MetricWriter.fileNameMatches(fileName5, baseFileName5));
-    }
+    // Act and Assert result
+    Assert.assertEquals("foo.idx", MetricWriter.formIndexFileName("foo"));
+  }
 
+  // Test written by Diffblue Cover.
+  @Test
+  public void formMetricFileNameInputNotNullPositiveOutputNotNull() {
 
+    // Act and Assert result
+    Assert.assertEquals("/-metrics.log", MetricWriter.formMetricFileName("/", 2));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void formMetricFileNameInputNotNullZeroOutputNotNull() {
+
+    // Act and Assert result
+    Assert.assertEquals("--metrics.log", MetricWriter.formMetricFileName(".", 0));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void formMetricFileNameInputNullZeroOutputNotNull() {
+
+    // Act and Assert result
+    Assert.assertEquals("-metrics.log", MetricWriter.formMetricFileName(null, 0));
+  }
 }

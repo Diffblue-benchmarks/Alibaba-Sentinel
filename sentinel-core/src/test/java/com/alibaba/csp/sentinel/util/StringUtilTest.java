@@ -1,84 +1,198 @@
-/*
- * Copyright 1999-2019 Alibaba Group Holding Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.alibaba.csp.sentinel.util;
 
+import com.alibaba.csp.sentinel.util.StringUtil;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 
 public class StringUtilTest {
 
+  @Rule public final ExpectedException thrown = ExpectedException.none();
+
+  @Rule public final Timeout globalTimeout = new Timeout(10000);
+
+  // Test written by Diffblue Cover.
   @Test
-  public void testCapitalize() {
-    Assert.assertNull(StringUtil.capitalize(null));
-    Assert.assertEquals("Foo", StringUtil.capitalize("foo"));
+  public void capitalizeInputNotNullOutputNotNull6() {
+
+    // Act and Assert result
+    Assert.assertEquals("", StringUtil.capitalize(""));
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testEqualsIgnoreCase() {
-    Assert.assertFalse(StringUtil.equalsIgnoreCase("", "BCCC"));
-    Assert.assertFalse(StringUtil.equalsIgnoreCase(null, ""));
-    Assert.assertTrue(StringUtil.equalsIgnoreCase("", ""));
-    Assert.assertTrue(StringUtil.equalsIgnoreCase("BcCc", "BCCC"));
+  public void capitalizeInputNullOutputNull() {
+
+    // Act and Assert result
+    Assert.assertNull(StringUtil.capitalize(null));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void equalsIgnoreCaseInputNotNullNotNullOutputFalse() {
+
+    // Arrange
+    final CharSequence str1 = "?";
+    final CharSequence str2 = "?????????????????????????????????????????????????????????????????";
+
+    // Act and Assert result
+    Assert.assertFalse(StringUtil.equalsIgnoreCase(str1, str2));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void equalsIgnoreCaseInputNotNullNullOutputFalse() {
+
+    // Arrange
+    final CharSequence str1 = "?";
+
+    // Act and Assert result
+    Assert.assertFalse(StringUtil.equalsIgnoreCase(str1, null));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void equalsIgnoreCaseInputNullNullOutputTrue() {
+
+    // Act and Assert result
     Assert.assertTrue(StringUtil.equalsIgnoreCase(null, null));
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testEquals() {
+  public void equalsInputNotNullNotNullOutputFalse() {
+
+    // Act and Assert result
+    Assert.assertFalse(StringUtil.equals("foo", "/"));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void equalsInputNullNotNullOutputFalse() {
+
+    // Act and Assert result
     Assert.assertFalse(StringUtil.equals(null, ""));
-    Assert.assertFalse(StringUtil.equals("\"", "\"#\"\"\"\"\"\""));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void equalsInputNullNullOutputTrue() {
+
+    // Act and Assert result
     Assert.assertTrue(StringUtil.equals(null, null));
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testIsBlank() {
-    Assert.assertFalse(StringUtil.isBlank("!!!!"));
+  public void isBlankInputNotNullOutputFalse() {
+
+    // Act and Assert result
+    Assert.assertFalse(StringUtil.isBlank("'"));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isBlankInputNotNullOutputFalse2() {
+
+    // Act and Assert result
+    Assert.assertFalse(StringUtil.isBlank("\n\u0000\u0000???"));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isBlankInputNotNullOutputTrue() {
+
+    // Act and Assert result
+    Assert.assertTrue(StringUtil.isBlank("\n"));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isBlankInputNullOutputTrue() {
+
+    // Act and Assert result
     Assert.assertTrue(StringUtil.isBlank(null));
-    Assert.assertTrue(StringUtil.isBlank("\n\n"));
-    Assert.assertTrue(StringUtil.isBlank(""));
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testIsEmpty() {
-    Assert.assertFalse(StringUtil.isEmpty("bar"));
-    Assert.assertTrue(StringUtil.isEmpty(""));
+  public void isEmptyInputNotNullOutputFalse() {
+
+    // Act and Assert result
+    Assert.assertFalse(StringUtil.isEmpty("a'b'c"));
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testIsNotBlank() {
-    Assert.assertFalse(StringUtil.isNotBlank(""));
-    Assert.assertTrue(StringUtil.isNotBlank("\"###"));
+  public void isEmptyInputNullOutputTrue() {
+
+    // Act and Assert result
+    Assert.assertTrue(StringUtil.isEmpty(null));
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testIsNotEmpty() {
-    Assert.assertFalse(StringUtil.isNotEmpty(""));
-    Assert.assertTrue(StringUtil.isNotEmpty("foo"));
+  public void isNotBlankInputNotNullOutputTrue() {
+
+    // Act and Assert result
+    Assert.assertTrue(StringUtil.isNotBlank("'"));
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testTrim() {
+  public void isNotBlankInputNullOutputFalse() {
+
+    // Act and Assert result
+    Assert.assertFalse(StringUtil.isNotBlank(null));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isNotEmptyInputNotNullOutputTrue() {
+
+    // Act and Assert result
+    Assert.assertTrue(StringUtil.isNotEmpty("/"));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void isNotEmptyInputNullOutputFalse() {
+
+    // Act and Assert result
+    Assert.assertFalse(StringUtil.isNotEmpty(null));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void trimInputNotNullOutputNotNull() {
+
+    // Act and Assert result
+    Assert.assertEquals("a'b'c", StringUtil.trim("a'b'c"));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void trimInputNullOutputNull() {
+
+    // Act and Assert result
     Assert.assertNull(StringUtil.trim(null));
-    Assert.assertEquals("", StringUtil.trim(""));
-    Assert.assertEquals("foo", StringUtil.trim("foo  "));
   }
 
+  // Test written by Diffblue Cover.
   @Test
-  public void testTrimToEmpty() {
-    Assert.assertEquals("", StringUtil.trimToEmpty(""));
+  public void trimToEmptyInputNotNullOutputNotNull() {
+
+    // Act and Assert result
+    Assert.assertEquals("foo", StringUtil.trimToEmpty("foo"));
+  }
+
+  // Test written by Diffblue Cover.
+  @Test
+  public void trimToEmptyInputNullOutputNotNull() {
+
+    // Act and Assert result
     Assert.assertEquals("", StringUtil.trimToEmpty(null));
   }
-
 }
